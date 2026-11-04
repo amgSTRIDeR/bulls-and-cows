@@ -63,11 +63,7 @@ coverage/
 
 # VS Code
 # Ignore the whole .vscode folder except for shared configurations
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.vscode
 
 # =========================
 # OS system files
