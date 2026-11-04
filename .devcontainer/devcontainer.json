@@ -1,0 +1,33 @@
+{
+  "name": "Universal Node.js Dev Container",
+
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "app-dev",
+  "workspaceFolder": "/app",
+
+  "overrideCommand": false,
+  "shutdownAction": "stopCompose",
+
+  "forwardPorts": [
+    3000,
+    4200,
+    5173,
+    8080
+  ],
+
+  "waitFor": "postCreateCommand",
+
+  "postCreateCommand": "if [ -f package-lock.json ]; then npm ci; elif [ -f yarn.lock ]; then yarn install; else npm install; fi",
+
+  "customizations": {
+    "jetbrains": {
+      "backend": "WebStorm"
+    },
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
