@@ -26,7 +26,6 @@ export default function generateSecret(length: number, base: Base, random = Math
 
     for (let i = 0; i < (base === 'bin' ? 2 : length); i += 1) {
         const index = random() * digitsArr.length;
-        console.log(index);
         secret += digitsArr.splice(index, 1);
     }
 
