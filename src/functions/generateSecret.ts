@@ -1,11 +1,11 @@
-const systems = {
+export const systems = {
     bin: '01',
     oct: '01234567',
     dec: '0123456789',
     hex: '0123456789ABCDEF',
 } as const;
 
-type Base = 'bin' | 'oct' | 'dec' | 'hex';
+export type Base = 'bin' | 'oct' | 'dec' | 'hex';
 
 export default function generateSecret(length: number, base: Base, random = Math.random): string {
     const digits = systems[base];
