@@ -1,5 +1,4 @@
-import type { Base } from './generateSecret';
-import { systems } from './generateSecret';
+import { systems, type Base } from '../models/models';
 
 export default function isValidGuess(guess: string, length: number, base: Base): boolean {
     if (
@@ -26,7 +25,7 @@ export default function isValidGuess(guess: string, length: number, base: Base):
     }
 
     for (let i = 0; i < guess.length; i += 1) {
-        if (!systems[base].includes(guess.charAt(i))) {
+        if (!systems[base].includes(guess.charAt(i).toLowerCase())) {
             return false;
         }
     }

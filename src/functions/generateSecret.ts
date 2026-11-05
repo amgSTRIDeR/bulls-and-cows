@@ -1,11 +1,4 @@
-export const systems = {
-    bin: '01',
-    oct: '01234567',
-    dec: '0123456789',
-    hex: '0123456789ABCDEF',
-} as const;
-
-export type Base = 'bin' | 'oct' | 'dec' | 'hex';
+import { systems, type Base } from '../models/models';
 
 export default function generateSecret(length: number, base: Base, random = Math.random): string {
     const digits = systems[base];
@@ -29,5 +22,5 @@ export default function generateSecret(length: number, base: Base, random = Math
         secret += digitsArr.splice(index, 1);
     }
 
-    return secret;
+    return secret.toUpperCase();
 }

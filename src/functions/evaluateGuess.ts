@@ -1,7 +1,4 @@
-interface BullsAndCows {
-    bulls: string[];
-    cows: string[];
-}
+import type { BullsAndCows } from '../models/models';
 
 export default function evaluateGuess(secret: string, guess: string): BullsAndCows {
     if (
@@ -16,17 +13,15 @@ export default function evaluateGuess(secret: string, guess: string): BullsAndCo
         throw new Error('Incorrect Data');
     }
 
-    const result = {
-        bulls: [],
-        cows: [],
-    };
+    const lowerCaseSecret = secret.toLowerCase();
+    const lowerCaseGuess = guess.toLowerCase();
 
-    return guess.split('').reduce(
+    return lowerCaseGuess.split('').reduce(
         (summ: BullsAndCows, curr: string, index: number) => {
-            if (curr === secret[index]) {
-                summ.bulls.push(curr);
-            } else if (secret.includes(curr)) {
-                summ.cows.push(curr);
+            if (curr === lowerCaseSecret[index]) {
+                summ.bulls.push(curr.toUpperCase());
+            } else if (lowerCaseSecret.includes(curr)) {
+                summ.cows.push(curr.toUpperCase());
             }
             return summ;
         },
