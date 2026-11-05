@@ -1,52 +1,33 @@
-export default function generateSecret(length: number, base: string, random = Math.random) {
-    const systems = {
-        bin: ['0', '1'],
-        oct: ['0', '1', '2', '3', '4', '5', '6', '7'],
-        dec: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-        hex: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'],
-    };
+const systems = {
+    bin: '01',
+    oct: '01234567',
+    dec: '0123456789',
+    hex: '0123456789ABCDEF',
+} as const;
 
-    if (length < 2 || length > 6) {
+type Base = 'bin' | 'oct' | 'dec' | 'hex';
+
+export default function generateSecret(length: number, base: Base, random = Math.random): string {
+    const digits = systems[base];
+
+    if (
+        length < 2 ||
+        length > 6 ||
+        !Number.isInteger(length) ||
+        typeof base !== 'string' ||
+        !digits ||
+        (random && typeof random !== 'function')
+    ) {
         throw new Error('Incorrect Data');
     }
-
-    if (typeof base !== 'string') {
-        throw new Error('Incorrect Data');
-    }
-
-    if (random && typeof random !== 'function') {
-        throw new Error('Incorrect Data');
-    }
-
     let secret = '';
 
-    switch (base) {
-        case 'bin':
-            for (let i = 0; i < 2; i += 1) {
-                const index = Math.floor(random() * systems.bin.length);
-                secret += systems.bin.splice(index, 1);
-            }
-            break;
-        case 'oct':
-            for (let i = 0; i < length; i += 1) {
-                const index = Math.floor(random() * systems.oct.length);
-                secret += systems.oct.splice(index, 1);
-            }
-            break;
-        case 'dec':
-            for (let i = 0; i < length; i += 1) {
-                const index = Math.floor(random() * systems.dec.length);
-                secret += systems.dec.splice(index, 1);
-            }
-            break;
-        case 'hex':
-            for (let i = 0; i < length; i += 1) {
-                const index = Math.floor(random() * systems.hex.length);
-                secret += systems.hex.splice(index, 1);
-            }
-            break;
-        default:
-            throw new Error('Incorrect Data');
+    const digitsArr = [...digits];
+
+    for (let i = 0; i < (base === 'bin' ? 2 : length); i += 1) {
+        const index = random() * digitsArr.length;
+        console.log(index);
+        secret += digitsArr.splice(index, 1);
     }
 
     return secret;
