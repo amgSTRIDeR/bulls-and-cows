@@ -16,18 +16,22 @@ describe('generateSecret', () => {
     });
 
     test("Throw an error 'Incorrect Data' if base is a number", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => generateSecret(3, 2, testRandom)).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if base is an object", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => generateSecret(3, {}, testRandom)).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if base is not correct", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => generateSecret(3, 'des', testRandom)).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if random is not a function", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => generateSecret(3, 'des', 'random')).toThrow('Incorrect Data');
     });
 

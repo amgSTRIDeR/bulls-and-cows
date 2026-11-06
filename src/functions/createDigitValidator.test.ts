@@ -3,24 +3,29 @@ import createDigitValidator from './createDigitValidator';
 
 describe('createDigitValidator', () => {
     test("Throw an error 'Incorrect Data' if base is not a string", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => createDigitValidator(123)).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if base is not from a systems", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => createDigitValidator('bis')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if char length > 1", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => createDigitValidator('bis')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if no char", () => {
         const func = createDigitValidator('dec');
+        // @ts-expect-error: intentionally execute without argumants
         expect(() => func()).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if char is not a string", () => {
         const func = createDigitValidator('bin');
+        // @ts-expect-error: intentionally execute with only one argument
         expect(() => func(1)).toThrow('Incorrect Data');
     });
 

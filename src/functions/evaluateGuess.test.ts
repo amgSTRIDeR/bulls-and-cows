@@ -3,10 +3,12 @@ import evaluateGuess from './evaluateGuess';
 
 describe('evaluateGuess', () => {
     test("Throw an error 'Incorrect Data' if secret is not a string", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => evaluateGuess(1, '123')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if guess is not a string", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => evaluateGuess('123', {})).toThrow('Incorrect Data');
     });
 
@@ -15,10 +17,12 @@ describe('evaluateGuess', () => {
     });
 
     test("Throw an error 'Incorrect Data' if secret are null", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => evaluateGuess(null, '123')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if guess are null", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => evaluateGuess('ABC', null)).toThrow('Incorrect Data');
     });
 

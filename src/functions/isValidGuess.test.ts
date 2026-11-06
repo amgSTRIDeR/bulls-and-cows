@@ -3,14 +3,17 @@ import isValidGuess from './isValidGuess';
 
 describe('isValidGuess', () => {
     test("Throw an error 'Incorrect Data' if guess is not a string", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => isValidGuess(1, 1, 'bin')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if length is not a number", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => isValidGuess('12', '1', 'bin')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if base is not correct", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => isValidGuess('12', 1, 'tho')).toThrow('Incorrect Data');
     });
 
@@ -23,14 +26,17 @@ describe('isValidGuess', () => {
     });
 
     test("Throw an error 'Incorrect Data' if 2 arguments", () => {
+        // @ts-expect-error: intentionally execute with two arguments
         expect(() => isValidGuess('1234567', 1)).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if 1 argument", () => {
+        // @ts-expect-error: intentionally execute with only one argument
         expect(() => isValidGuess('1234567')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if no arguments", () => {
+        // @ts-expect-error: intentionally execute without arguments
         expect(() => isValidGuess()).toThrow('Incorrect Data');
     });
 

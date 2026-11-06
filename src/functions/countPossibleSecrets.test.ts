@@ -3,18 +3,22 @@ import countPossibleSecrets from './countPossibleSecrets';
 
 describe('countPossibleSecrets', () => {
     test("Throw an error 'Incorrect Data' if no arguments passed", () => {
+        // @ts-expect-error: intentionally execute without argumants
         expect(() => countPossibleSecrets()).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if only one argument passed", () => {
+        // @ts-expect-error: intentionally execute with only one argument
         expect(() => countPossibleSecrets('2')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if length is not a number", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => countPossibleSecrets('2', 'bin')).toThrow('Incorrect Data');
     });
 
     test("Throw an error 'Incorrect Data' if base is not a string", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => countPossibleSecrets(2, 123)).toThrow('Incorrect Data');
     });
 
@@ -27,6 +31,7 @@ describe('countPossibleSecrets', () => {
     });
 
     test("Throw an error 'Incorrect Data' for incorrect base", () => {
+        // @ts-expect-error: intentionally for testing
         expect(() => countPossibleSecrets(3, 'ham')).toThrow('Incorrect Data');
     });
 
