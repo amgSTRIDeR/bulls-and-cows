@@ -12,9 +12,13 @@ const baseConfig = {
     mode: 'development',
     module: {
         rules: [
-            {
-                test: /\.css$/i,
-                use: ['style-loader', 'css-loader'],
+   {
+            test: /\.(s[ac]ss|css)$/i,
+            use: [
+                'style-loader',
+                'css-loader',
+                'sass-loader'
+            ],
             },
             {
                 test: /\.tsx?$/,
