@@ -1,4 +1,5 @@
-import { systems, type Base } from '../models/models';
+import { type Base } from '../models/models';
+import createDigitValidator from './createDigitValidator';
 
 export default function isValidGuess(guess: string, length: number, base: Base): boolean {
     if (
@@ -9,11 +10,12 @@ export default function isValidGuess(guess: string, length: number, base: Base):
         guess.length < 2 ||
         guess.length > 6 ||
         typeof length !== 'number' ||
-        typeof base !== 'string' ||
-        !systems[base]
+        typeof base !== 'string'
     ) {
         throw new Error('Incorrect Data');
     }
+
+    const validateDigit = createDigitValidator(base);
 
     if (guess.length !== length) {
         return false;
@@ -25,7 +27,7 @@ export default function isValidGuess(guess: string, length: number, base: Base):
     }
 
     for (let i = 0; i < guess.length; i += 1) {
-        if (!systems[base].includes(guess.charAt(i).toLowerCase())) {
+        if (!validateDigit(guess.charAt(i))) {
             return false;
         }
     }
