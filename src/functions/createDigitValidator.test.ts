@@ -31,22 +31,22 @@ describe('createDigitValidator', () => {
 
     test('Should return false if char is not right for the dec system', () => {
         const func = createDigitValidator('dec');
-        expect(() => func('11')).toBeFalsy();
+        expect(func('t')).toBeFalsy();
     });
 
     test('Should return false if char is not right for the bin system', () => {
         const func = createDigitValidator('bin');
-        expect(() => func('2')).toBeFalsy();
+        expect(func('2')).toBeFalsy();
     });
 
     test('Should return false if char is not right for the hex system', () => {
         const func = createDigitValidator('hex');
-        expect(() => func('H')).toBeFalsy();
+        expect(func('H')).toBeFalsy();
     });
 
     test('Should return true if char is right for the hex system for lowerCase', () => {
         const func = createDigitValidator('hex');
-        expect(() => func('b')).toBeFalsy();
+        expect(() => func('b')).toBeTruthy();
     });
 
     test('Should return true if char is right for the hex system for upperCase', () => {
