@@ -1,3 +1,5 @@
+import countPossibleSecrets from '../functions/countPossibleSecrets';
+import type { Base, Config, RenderGameFunction } from '../models/models';
 import { el, text } from '../ui/dom';
 import { bullIcon, layersIcon, refreshIcon } from '../ui/icons';
 
@@ -16,7 +18,12 @@ function group(title: string, className: string, name: string, options: readonly
     return el('fieldset', { className: `settings__group ${className}`.trim() }, el('legend', { text: title }), choices);
 }
 
-export function createSettings(): HTMLElement {
+export function createSettings(renderGame: RenderGameFunction): HTMLElement {
+    const config: Config = {
+        base: null,
+        length: null,
+    };
+
     const brand = el(
         'div',
         { className: 'settings__brand' },
@@ -24,28 +31,108 @@ export function createSettings(): HTMLElement {
         el('h2', { attributes: { id: 'settings-title' } }, text('Быки и коровы'))
     );
 
+    const combinationsValueEl = el('strong', { className: 'combinations--value' });
+
     const combinations = el(
         'div',
         { className: 'combinations', attributes: { 'aria-label': 'Number of combinations' } },
         layersIcon(),
-        el('p', {}, text('Количество комбинаций:'), el('strong', { className: 'combinations' }))
+        el('p', {}, text('Количество комбинаций:'), combinationsValueEl)
     );
 
     const newGame = el(
         'button',
-        { className: 'button button--primary settings__new-game', attributes: { type: 'button' } },
+        { className: 'button button--primary settings__new-game', attributes: { type: 'button', disabled: 'true' } },
         refreshIcon(),
         text('Новая игра')
     );
+
+    newGame.addEventListener('click', () => {
+        renderGame(config);
+    });
+
+    const lengthGroup = group('Длина числа', '', 'length', ['2', '3', '4', '5', '6']);
+    const baseGroup = group('Система счисления', 'settings__group--base', 'base', ['BIN', 'OCT', 'DEC', 'HEX']);
+
+    baseGroup.addEventListener('click', (e) => {
+        if (e.target instanceof HTMLInputElement) {
+            const value = e.target.value.toLowerCase();
+            if (isBase(value)) {
+                config.base = value;
+
+                if (value.toLowerCase() === 'bin') {
+                    if (config.length) {
+                        config.length = 2;
+                        narrowLength(lengthGroup, true);
+                    } else {
+                        narrowLength(lengthGroup, false);
+                    }
+                } else {
+                    widerLength(lengthGroup);
+                }
+            }
+            checkConfig(config, combinationsValueEl, newGame);
+        }
+    });
+
+    lengthGroup.addEventListener('click', (e) => {
+        if (e.target instanceof HTMLInputElement) {
+            const value = +e.target.value;
+            if (Number.isInteger(value)) {
+                config.length = value;
+            }
+        }
+
+        checkConfig(config, combinationsValueEl, newGame);
+    });
 
     return el(
         'aside',
         { className: 'panel settings', attributes: { 'aria-labelledby': 'settings-title' } },
         brand,
         el('div', { className: 'settings__divider', attributes: { 'aria-hidden': 'true' } }),
-        group('Длина числа', '', 'length', ['2', '3', '4', '5', '6']),
-        group('Система счисления', 'settings__group--base', 'base', ['BIN', 'OCT', 'DEC', 'HEX']),
+        baseGroup,
+        lengthGroup,
         combinations,
         newGame
     );
+}
+
+function isBase(value: string): value is Base {
+    return ['bin', 'oct', 'dec', 'hex'].includes(value);
+}
+
+function narrowLength(group: HTMLFieldSetElement, setActive?: boolean) {
+    const lengthInputs = group.querySelectorAll('input');
+    lengthInputs.forEach((input) => {
+        if (input.value === '2') {
+            if (setActive) {
+                input.checked = true;
+            } else {
+                input.checked = false;
+            }
+        } else {
+            input.checked = false;
+            input.disabled = true;
+        }
+    });
+}
+
+function widerLength(group: HTMLFieldSetElement) {
+    const lengthInputs = group.querySelectorAll('input');
+    lengthInputs.forEach((input) => {
+        input.disabled = false;
+    });
+}
+
+function checkConfig(conf: Config, combinationsValueEl: HTMLElement, newGameButton: HTMLButtonElement) {
+    const length = conf.length;
+    const base = conf.base;
+    if (length && base) {
+        newGameButton.disabled = false;
+        combinationsValueEl.textContent = String(countPossibleSecrets(length, base));
+    } else {
+        newGameButton.disabled = true;
+        combinationsValueEl.textContent = '';
+    }
 }
