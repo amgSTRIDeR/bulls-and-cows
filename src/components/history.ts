@@ -24,7 +24,11 @@ function createAttempt(guess: string, bullsAndCows: BullsAndCows): HTMLLIElement
     };
 
     guess.split('').forEach((digit) => {
-        const status = bullsAndCows.bulls.includes(digit) ? 'bull' : bullsAndCows.cows.includes(digit) ? 'cow' : 'miss';
+        const status = bullsAndCows.bulls.includes(digit.toUpperCase())
+            ? 'bull'
+            : bullsAndCows.cows.includes(digit.toUpperCase())
+              ? 'cow'
+              : 'miss';
         const className = status === 'miss' ? 'history__digit' : `history__digit history__digit--${status}`;
         row.append(
             el('span', {
