@@ -161,7 +161,8 @@ input:focus-visible {
 // ---------------------------------------------------
 // 1. Settings panel
 // ---------------------------------------------------
-.settings {
+.settings,
+.record {
     display: flex;
     flex-direction: column;
     padding: 24px 24px 50px;
@@ -205,6 +206,10 @@ input:focus-visible {
         &--base {
             margin-bottom: 44px;
         }
+
+        &--record-base {
+            margin-bottom: 44px;
+        }
     }
 
     &__choices {
@@ -215,7 +220,14 @@ input:focus-visible {
             grid-template-columns: repeat(5, minmax(0, 1fr));
         }
 
+        &--record-length {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
         &--base {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        &--record-base {
             grid-template-columns: repeat(4, minmax(0, 1fr));
         }
     }
@@ -234,7 +246,8 @@ input:focus-visible {
     color: var(--color-primary);
 }
 
-.choice {
+.choice,
+.record-choice {
     position: relative;
     min-width: 0;
 
@@ -609,6 +622,19 @@ input:focus-visible {
             }
         }
     }
+
+    .record__group--base {
+        margin: 0;
+    }
+
+    .record__group--record-base {
+        margin-top: 0;
+    }
+
+    .record__choices--length,
+    .record__choices--record-length {
+        margin-bottom: 20px;
+    }
 }
 
 // ---------------------------------------------------
@@ -689,6 +715,10 @@ input:focus-visible {
             }
 
             &--base {
+                margin-top: 22px;
+            }
+
+            &--record-base {
                 margin-top: 22px;
             }
         }
