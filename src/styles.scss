@@ -100,6 +100,7 @@ input:focus-visible {
     &.records {
         overflow-y: scroll;
         scrollbar-color: var(--color-bg);
+        max-height: 50vh;
 
         &::-webkit-scrollbar {
             scrollbar-color: var(--color-bg);
@@ -112,6 +113,10 @@ input:focus-visible {
             background-clip: padding-box;
         }
     }
+}
+
+.game-field {
+    font-size: 30px;
 }
 
 .button {
