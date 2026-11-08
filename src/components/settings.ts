@@ -19,7 +19,7 @@ function group(title: string, className: string, name: string, options: readonly
 }
 
 export function createSettings(renderGame: RenderGameFunction): HTMLElement {
-    const config: Config = {
+    let config: Config = {
         base: null,
         length: null,
     };
@@ -54,19 +54,20 @@ export function createSettings(renderGame: RenderGameFunction): HTMLElement {
     const lengthGroup = group('Длина числа', '', 'length', ['2', '3', '4', '5', '6']);
     const baseGroup = group('Система счисления', 'settings__group--base', 'base', ['BIN', 'OCT', 'DEC', 'HEX']);
 
-    baseGroup.addEventListener('click', (e) => {
+    baseGroup.addEventListener('change', (e) => {
         if (e.target instanceof HTMLInputElement) {
             const value = e.target.value.toLowerCase();
             if (isBase(value)) {
-                config.base = value;
+                const nextLength = value === 'bin' && config.length !== null ? 2 : config.length;
 
-                if (value.toLowerCase() === 'bin') {
-                    if (config.length) {
-                        config.length = 2;
-                        narrowLength(lengthGroup, true);
-                    } else {
-                        narrowLength(lengthGroup, false);
-                    }
+                config = {
+                    ...config,
+                    base: value,
+                    length: nextLength,
+                };
+
+                if (value === 'bin') {
+                    narrowLength(lengthGroup, nextLength !== null);
                 } else {
                     widerLength(lengthGroup);
                 }
@@ -75,11 +76,14 @@ export function createSettings(renderGame: RenderGameFunction): HTMLElement {
         }
     });
 
-    lengthGroup.addEventListener('click', (e) => {
+    lengthGroup.addEventListener('change', (e) => {
         if (e.target instanceof HTMLInputElement) {
             const value = +e.target.value;
             if (Number.isInteger(value)) {
-                config.length = value;
+                config = {
+                    ...config,
+                    length: value,
+                };
             }
         }
 
