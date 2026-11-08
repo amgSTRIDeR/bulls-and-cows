@@ -101,7 +101,7 @@ export function startGame(
             });
             inputs.append(digitInput);
 
-            digitInput.addEventListener('change', (e) => {
+            digitInput.addEventListener('input', (e) => {
                 if (e.target instanceof HTMLInputElement) {
                     if (digitValidator(e.target.value)) {
                         currentGuess[i] = e.target.value;
