@@ -48,6 +48,7 @@ export function startGame(
 
     if (gameField) {
         const currentGuess = Array.from({ length: conf.length }, () => '');
+        const usedGuesses = new Set<string>();
         clearInterval(timerIdx);
         gameField.textContent = '';
         const timeCounterEl = el('strong', { text: '00:00', className: 'time-counter' });
@@ -89,6 +90,16 @@ export function startGame(
             attributes: { role: 'group', 'aria-label': 'Four assumed numbers' },
         });
         const digitValidator = createDigitValidator(conf.base);
+
+        const updateCheckButton = () => {
+            const guess = currentGuess.join('');
+            checkButton.disabled =
+                currentGuess.length !== conf.length ||
+                guess.length !== conf.length ||
+                !isValidGuess(guess, conf.length, conf.base!) ||
+                usedGuesses.has(guess.toLowerCase());
+        };
+
         for (let i = 0; i < conf.length; i += 1) {
             const digitInput = el('input', {
                 className: 'guess-digit',
@@ -105,16 +116,7 @@ export function startGame(
                 if (e.target instanceof HTMLInputElement) {
                     if (digitValidator(e.target.value)) {
                         currentGuess[i] = e.target.value;
-                        if (
-                            conf.base &&
-                            conf.length &&
-                            currentGuess.join('').length === conf.length &&
-                            isValidGuess(currentGuess.join(''), conf.length, conf.base)
-                        ) {
-                            checkButton.disabled = false;
-                        } else {
-                            checkButton.disabled = true;
-                        }
+                        updateCheckButton();
                     } else {
                         currentGuess[i] = '';
                         checkButton.disabled = true;
@@ -125,11 +127,19 @@ export function startGame(
         }
 
         checkButton.addEventListener('click', () => {
+            const guess = currentGuess.join('');
+            const normalizedGuess = guess.toLowerCase();
+            if (usedGuesses.has(normalizedGuess)) {
+                return;
+            }
+
+            usedGuesses.add(normalizedGuess);
             tries += 1;
             triesEl.textContent = String(tries);
             roundEl.textContent = `Раунд ${tries + 1}`;
-            const guessCheck = evaluateGuess(secret, currentGuess.join(''));
-            addTry(currentGuess.join(''), guessCheck);
+            const guessCheck = evaluateGuess(secret, guess);
+            addTry(guess, guessCheck);
+            checkButton.disabled = true;
             if (guessCheck.bulls.length === conf.length) {
                 addResult(tries, gameTime, conf);
                 stopGame();
