@@ -14,24 +14,9 @@ export function createRecords(): HTMLElement {
             el('th', { text: 'Время', attributes: { scope: 'col' } })
         )
     );
-    const body = el('tbody');
+    const body = el('tbody', { className: 'record-table' });
 
-    const recordsFromStorage = JSON.parse(localStorage.getItem('game-records') ?? '[]');
-    const records = isDemoRecord(recordsFromStorage) ? recordsFromStorage : [];
-
-    for (const record of records) {
-        body.append(
-            el(
-                'tr',
-                record.rank === 1 ? { className: 'records__best' } : {},
-                el('td', { text: String(record.rank) }),
-                el('td', { text: String(record.attempts) }),
-                el('td', { text: record.time })
-            )
-        );
-    }
-
-    return el(
+    const recordsEl = el(
         'section',
         { className: 'panel records', attributes: { 'aria-labelledby': 'records-title' } },
         el(
@@ -48,19 +33,63 @@ export function createRecords(): HTMLElement {
             body
         )
     );
+
+    fillRecords();
+    return recordsEl;
 }
 
-function isDemoRecord(value: unknown): value is GameRecord[] {
-    if (typeof value !== 'object' || value === null) {
-        return false;
+export function addRecord(tries: number, gameTime: string) {
+    const recordsFromStorage: GameRecord[] = JSON.parse(localStorage.getItem('game-records') ?? '[]');
+    recordsFromStorage.push({ rank: 0, attempts: tries, time: gameTime });
+
+    recordsFromStorage.sort((a, b) => {
+        if (a.attempts < b.attempts) {
+            return -1;
+        } else if (a.attempts > b.attempts) {
+            return 1;
+        } else {
+            const timeA = parseFloat(a.time.split(':').join(''));
+            const timeB = parseFloat(b.time.split(':').join(''));
+            if (timeA < timeB) {
+                return -1;
+            } else if (timeA > timeB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    });
+
+    for (let i = 0; i < recordsFromStorage.length; i += 1) {
+        const record = recordsFromStorage[i];
+        if (record) {
+            record.rank = i + 1;
+        }
     }
 
-    return (
-        'rank' in value &&
-        typeof value.rank === 'number' &&
-        'attempts' in value &&
-        typeof value.attempts === 'number' &&
-        'time' in value &&
-        typeof value.time === 'string'
-    );
+    localStorage.setItem('game-records', JSON.stringify(recordsFromStorage));
+    fillRecords();
+}
+
+function fillRecords() {
+    requestAnimationFrame(() => {
+        const recordTable = document.querySelector('.record-table');
+
+        if (recordTable) {
+            recordTable.textContent = '';
+            const recordsFromStorage = JSON.parse(localStorage.getItem('game-records') ?? '[]');
+            const records = recordsFromStorage ?? [];
+            for (const record of records) {
+                recordTable.append(
+                    el(
+                        'tr',
+                        record.rank === 1 ? { className: 'records__best' } : {},
+                        el('td', { text: String(record.rank) }),
+                        el('td', { text: String(record.attempts) }),
+                        el('td', { text: record.time })
+                    )
+                );
+            }
+        }
+    });
 }
