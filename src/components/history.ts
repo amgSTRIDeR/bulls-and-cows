@@ -62,7 +62,7 @@ export function createHistory(): HTMLElement {
 export function addHistoryEntry(guess: string, bullsAndCows: BullsAndCows) {
     const list = document.querySelector('.history__list');
     if (list) {
-        list.append(createAttempt(guess, bullsAndCows));
+        list.prepend(createAttempt(guess, bullsAndCows));
     }
 }
 
