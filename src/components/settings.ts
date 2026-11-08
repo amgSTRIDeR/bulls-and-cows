@@ -140,3 +140,15 @@ function checkConfig(conf: Config, combinationsValueEl: HTMLElement, newGameButt
         combinationsValueEl.textContent = '';
     }
 }
+
+export function hideSettings() {
+    const settingsBlock = document.querySelector('.panel.settings');
+    settingsBlock?.classList.add('hidden');
+    settingsBlock?.setAttribute('inert', '');
+}
+
+export function showSettings() {
+    const settingsBlock = document.querySelector('.panel.settings');
+    settingsBlock?.classList.remove('hidden');
+    settingsBlock?.removeAttribute('inert');
+}
