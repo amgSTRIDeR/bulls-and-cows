@@ -37,7 +37,7 @@ export function createSettings(renderGame: RenderGameFunction): HTMLElement {
         'div',
         { className: 'combinations', attributes: { 'aria-label': 'Number of combinations' } },
         layersIcon(),
-        el('p', {}, text('Количество комбинаций:'), combinationsValueEl)
+        el('p', {}, text('Количество комбинаций: '), combinationsValueEl)
     );
 
     const newGame = el(
