@@ -38,40 +38,35 @@ export function createRecords(): HTMLElement {
     return recordsEl;
 }
 
-export function addRecord(tries: number, gameTime: string) {
-    const recordsFromStorage: GameRecord[] = JSON.parse(localStorage.getItem('game-records') ?? '[]');
-    recordsFromStorage.push({ rank: 0, attempts: tries, time: gameTime });
-
-    recordsFromStorage.sort((a, b) => {
-        if (a.attempts < b.attempts) {
-            return -1;
-        } else if (a.attempts > b.attempts) {
-            return 1;
-        } else {
-            const timeA = parseFloat(a.time.split(':').join(''));
-            const timeB = parseFloat(b.time.split(':').join(''));
-            if (timeA < timeB) {
-                return -1;
-            } else if (timeA > timeB) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    });
-
-    for (let i = 0; i < recordsFromStorage.length; i += 1) {
-        const record = recordsFromStorage[i];
-        if (record) {
-            record.rank = i + 1;
-        }
-    }
-
-    localStorage.setItem('game-records', JSON.stringify(recordsFromStorage));
-    fillRecords();
+function timeToSeconds(time: string): number {
+    return time
+        .split(':')
+        .map(Number)
+        .reduce((total, value) => total * 60 + value, 0);
 }
 
-function fillRecords() {
+export function addRecord(tries: number, gameTime: string): void {
+    const records: GameRecord[] = JSON.parse(localStorage.getItem('game-records') ?? '[]');
+
+    const newRecord: GameRecord = {
+        rank: 0,
+        attempts: tries,
+        time: gameTime,
+    };
+
+    const updatedRecords = [...records, newRecord]
+        .sort((a, b) => a.attempts - b.attempts || timeToSeconds(a.time) - timeToSeconds(b.time))
+        .map((record, index) => ({
+            ...record,
+            rank: index + 1,
+        }));
+
+    localStorage.setItem('game-records', JSON.stringify(updatedRecords));
+
+    fillRecords(tries, gameTime);
+}
+
+function fillRecords(tries?: number, gameTime?: string) {
     requestAnimationFrame(() => {
         const recordTable = document.querySelector('.record-table');
 
@@ -80,10 +75,16 @@ function fillRecords() {
             const recordsFromStorage = JSON.parse(localStorage.getItem('game-records') ?? '[]');
             const records = recordsFromStorage ?? [];
             for (const record of records) {
+                let recordClass = {};
+                if (tries === record.attempts && gameTime === record.time) {
+                    recordClass = { className: 'records__best' };
+                    tries = undefined;
+                    gameTime = undefined;
+                }
                 recordTable.append(
                     el(
                         'tr',
-                        record.rank === 1 ? { className: 'records__best' } : {},
+                        recordClass,
                         el('td', { text: String(record.rank) }),
                         el('td', { text: String(record.attempts) }),
                         el('td', { text: record.time })
