@@ -2,7 +2,7 @@ import createDigitValidator from '../functions/createDigitValidator';
 import evaluateGuess from '../functions/evaluateGuess';
 import generateSecret from '../functions/generateSecret';
 import isValidGuess from '../functions/isValidGuess';
-import type { Base, BullsAndCows, Config, GameRecord } from '../models/models';
+import type { BullsAndCows, Config } from '../models/models';
 import { el, text } from '../ui/dom';
 import { checkIcon, clockIcon, mascotIllustration, targetIcon } from '../ui/icons';
 
@@ -47,7 +47,7 @@ export function startGame(
     const secret = generateSecret(conf.length, conf.base);
 
     if (gameField) {
-        const currentGuess = Array.from({ length: conf.length }, (el) => '');
+        const currentGuess = Array.from({ length: conf.length }, () => '');
         clearInterval(timerIdx);
         gameField.textContent = '';
         const timeCounterEl = el('strong', { text: '00:00', className: 'time-counter' });
