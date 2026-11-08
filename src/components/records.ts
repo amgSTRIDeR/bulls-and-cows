@@ -1,8 +1,60 @@
-import type { GameRecord } from '../models/models';
+import type { Config, GameRecord } from '../models/models';
 import { el } from '../ui/dom';
 import { trophyIcon } from '../ui/icons';
+import { isBase } from './settings';
+
+let currentConf: Config = {
+    base: null,
+    length: null,
+};
+
+function choice(name: string, value: string, label: string): HTMLLabelElement {
+    const input = el('input', { attributes: { type: 'radio', name, value } });
+
+    return el('label', { className: 'record-choice' }, input, el('span', { text: label }));
+}
+
+function group(title: string, className: string, name: string, options: readonly string[]): HTMLFieldSetElement {
+    const choices = el('div', { className: `record__choices record__choices--${name}` });
+    for (const value of options) {
+        choices.append(choice(name, value.toLowerCase(), value));
+    }
+
+    return el('fieldset', { className: `record__group ${className}`.trim() }, el('legend', { text: title }), choices);
+}
 
 export function createRecords(): HTMLElement {
+    currentConf.length = null;
+    currentConf.base = null;
+    const baseGroup = group('', 'record__group--base', 'record-base', ['BIN', 'OCT', 'DEC', 'HEX']);
+    const lengthGroup = group('', '', 'record-length', ['2', '3', '4', '5', '6']);
+
+    baseGroup.addEventListener('change', (e) => {
+        if (e.target instanceof HTMLInputElement) {
+            const value = e.target.value.toLowerCase();
+            if (isBase(value)) {
+                currentConf = {
+                    ...currentConf,
+                    base: value,
+                };
+            }
+            fillRecords();
+        }
+    });
+
+    lengthGroup.addEventListener('change', (e) => {
+        if (e.target instanceof HTMLInputElement) {
+            const value = +e.target.value;
+            if (Number.isInteger(value)) {
+                currentConf = {
+                    ...currentConf,
+                    length: value,
+                };
+            }
+            fillRecords();
+        }
+    });
+
     const header = el(
         'thead',
         {},
@@ -25,6 +77,8 @@ export function createRecords(): HTMLElement {
             trophyIcon(),
             el('span', { text: 'Лучшие результаты' })
         ),
+        baseGroup,
+        lengthGroup,
         el(
             'table',
             { className: 'records__table' },
@@ -45,8 +99,8 @@ function timeToSeconds(time: string): number {
         .reduce((total, value) => total * 60 + value, 0);
 }
 
-export function addRecord(tries: number, gameTime: string): void {
-    const records: GameRecord[] = JSON.parse(localStorage.getItem('game-records') ?? '[]');
+export function addRecord(tries: number, gameTime: string, conf: Config): void {
+    const records: GameRecord[] = JSON.parse(localStorage.getItem(`game-records-${conf.base}-${conf.length}`) ?? '[]');
 
     const newRecord: GameRecord = {
         rank: 0,
@@ -61,18 +115,24 @@ export function addRecord(tries: number, gameTime: string): void {
             rank: index + 1,
         }));
 
-    localStorage.setItem('game-records', JSON.stringify(updatedRecords));
-
-    fillRecords(tries, gameTime);
+    localStorage.setItem(`game-records-${conf.base}-${conf.length}`, JSON.stringify(updatedRecords));
+    if (currentConf.base === conf.base && currentConf.length === conf.length) {
+        fillRecords(tries, gameTime);
+    }
 }
 
 function fillRecords(tries?: number, gameTime?: string) {
+    if (!currentConf.base && !currentConf.length) {
+        return;
+    }
     requestAnimationFrame(() => {
         const recordTable = document.querySelector('.record-table');
 
         if (recordTable) {
             recordTable.textContent = '';
-            const recordsFromStorage = JSON.parse(localStorage.getItem('game-records') ?? '[]');
+            const recordsFromStorage = JSON.parse(
+                localStorage.getItem(`game-records-${currentConf.base}-${currentConf.length}`) ?? '[]'
+            );
             const records = recordsFromStorage ?? [];
             for (const record of records) {
                 let recordClass = {};

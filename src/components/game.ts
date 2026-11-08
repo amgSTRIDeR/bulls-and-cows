@@ -35,7 +35,7 @@ export function createGame(): HTMLElement {
 export function startGame(
     conf: Config,
     addTry: (guess: string, bullsAndCows: BullsAndCows) => void,
-    addResult: (tries: number, gameTime: string) => void
+    addResult: (tries: number, gameTime: string, conf: Config) => void
 ) {
     if (!conf.base || !conf.length) {
         return;
@@ -131,7 +131,7 @@ export function startGame(
             const guessCheck = evaluateGuess(secret, currentGuess.join(''));
             addTry(currentGuess.join(''), guessCheck);
             if (guessCheck.bulls.length === conf.length) {
-                addResult(tries, gameTime);
+                addResult(tries, gameTime, conf);
                 stopGame();
             }
         });

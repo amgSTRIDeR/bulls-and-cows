@@ -102,7 +102,7 @@ export function createSettings(renderGame: RenderGameFunction): HTMLElement {
     );
 }
 
-function isBase(value: string): value is Base {
+export function isBase(value: string): value is Base {
     return ['bin', 'oct', 'dec', 'hex'].includes(value);
 }
 

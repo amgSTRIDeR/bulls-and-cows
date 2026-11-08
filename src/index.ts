@@ -23,6 +23,6 @@ function addTry(guess: string, bullsAndCows: BullsAndCows) {
     addHistoryEntry(guess, bullsAndCows);
 }
 
-function addResult(tries: number, gameTime: string) {
-    addRecord(tries, gameTime);
+function addResult(tries: number, gameTime: string, conf: Config) {
+    addRecord(tries, gameTime, conf);
 }
