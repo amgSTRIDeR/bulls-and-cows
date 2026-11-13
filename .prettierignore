@@ -1,0 +1,7 @@
+**/*.json
+**/*.dev
+**/*.yml
+**/*.js
+dist
+node_modules
+.devcontainer
