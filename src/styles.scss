@@ -370,6 +370,13 @@ input:focus-visible {
         width: min(100%, 548px);
     }
 
+    &__error {
+        min-height: 1.4em;
+        margin: -22px 0 14px;
+        color: #ff9a9a;
+        font-size: clamp(14px, 1.1vw, 18px);
+    }
+
     &__round {
         margin: 21px 0 0;
         color: #b9c7db;
