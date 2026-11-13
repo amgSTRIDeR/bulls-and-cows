@@ -44,7 +44,7 @@ export function createSettings(renderGame: RenderGameFunction): HTMLElement {
         'button',
         { className: 'button button--primary settings__new-game', attributes: { type: 'button', disabled: 'true' } },
         refreshIcon(),
-        text('Новая игра')
+        text('Начать новую игру')
     );
 
     newGame.addEventListener('click', () => {
