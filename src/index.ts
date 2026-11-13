@@ -1,6 +1,6 @@
 import './styles.scss';
 import { el } from './ui/dom';
-import { createSettings, hideSettings, showSettings } from './components/settings';
+import { createSettings } from './components/settings';
 import { createGame, startGame } from './components/game';
 import { addHistoryEntry, createHistory, resetHistory } from './components/history';
 import { addRecord, createRecords } from './components/records';
@@ -16,7 +16,6 @@ renderPage();
 
 function renderGame(conf: Config) {
     startGame(conf, addTry, addResult);
-    hideSettings();
     resetHistory();
 }
 
@@ -25,6 +24,5 @@ function addTry(guess: string, bullsAndCows: BullsAndCows) {
 }
 
 function addResult(tries: number, gameTime: string, conf: Config) {
-    showSettings();
     addRecord(tries, gameTime, conf);
 }
