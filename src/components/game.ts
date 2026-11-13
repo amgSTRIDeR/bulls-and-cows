@@ -84,20 +84,34 @@ export function startGame(
             checkIcon(),
             text('Проверить')
         );
+        const errorMessage = el('p', {
+            className: 'game__error',
+            attributes: { role: 'status', 'aria-live': 'polite' },
+        });
 
         const inputs = el('div', {
             className: 'game__guess',
-            attributes: { role: 'group', 'aria-label': 'Four assumed numbers' },
+            attributes: { role: 'group', 'aria-label': 'Цифры вашей попытки' },
         });
+        inputs.style.gridTemplateColumns = `repeat(${conf.length}, minmax(0, 1fr))`;
         const digitValidator = createDigitValidator(conf.base);
+        const digitInputs: HTMLInputElement[] = [];
 
         const updateCheckButton = () => {
             const guess = currentGuess.join('');
+            const enteredDigits = currentGuess.filter(Boolean);
+            const hasRepeatedDigit = new Set(enteredDigits).size !== enteredDigits.length;
+
+            if (hasRepeatedDigit) {
+                errorMessage.textContent = 'Цифры в числе не должны повторяться.';
+            } else if (guess.length === conf.length && usedGuesses.has(guess)) {
+                errorMessage.textContent = 'Такая попытка уже была. Введите другую комбинацию.';
+            } else {
+                errorMessage.textContent = '';
+            }
+
             checkButton.disabled =
-                currentGuess.length !== conf.length ||
-                guess.length !== conf.length ||
-                !isValidGuess(guess, conf.length, conf.base!) ||
-                usedGuesses.has(guess.toLowerCase());
+                guess.length !== conf.length || !isValidGuess(guess, conf.length, conf.base!) || usedGuesses.has(guess);
         };
 
         for (let i = 0; i < conf.length; i += 1) {
@@ -105,41 +119,57 @@ export function startGame(
                 className: 'guess-digit',
                 attributes: {
                     type: 'text',
-                    inputmode: 'text',
+                    inputmode: conf.base === 'hex' ? 'text' : 'numeric',
                     maxlength: '1',
-                    'aria-label': `guess-digit ${i}`,
+                    'aria-label': `Цифра ${i + 1}`,
                 },
             });
+            digitInputs.push(digitInput);
             inputs.append(digitInput);
 
             digitInput.addEventListener('input', (e) => {
                 if (e.target instanceof HTMLInputElement) {
-                    if (digitValidator(e.target.value)) {
-                        currentGuess[i] = e.target.value;
-                        updateCheckButton();
-                    } else {
+                    if (!e.target.value) {
                         currentGuess[i] = '';
-                        checkButton.disabled = true;
-                        digitInput.value = '';
+                        updateCheckButton();
+                        return;
                     }
+
+                    if (!digitValidator(e.target.value)) {
+                        currentGuess[i] = '';
+                        digitInput.value = '';
+                        updateCheckButton();
+                        errorMessage.textContent = 'Недопустимая цифра для выбранной системы счисления.';
+                        return;
+                    }
+
+                    const digit = e.target.value.toLowerCase();
+                    currentGuess[i] = digit;
+                    digitInput.value = digit.toUpperCase();
+                    updateCheckButton();
+                    (digitInputs[i + 1] ?? checkButton).focus();
                 }
             });
         }
 
         checkButton.addEventListener('click', () => {
             const guess = currentGuess.join('');
-            const normalizedGuess = guess.toLowerCase();
-            if (usedGuesses.has(normalizedGuess)) {
+            if (usedGuesses.has(guess)) {
                 return;
             }
 
-            usedGuesses.add(normalizedGuess);
+            usedGuesses.add(guess);
             tries += 1;
             triesEl.textContent = String(tries);
             roundEl.textContent = `Раунд ${tries + 1}`;
             const guessCheck = evaluateGuess(secret, guess);
-            addTry(guess, guessCheck);
-            checkButton.disabled = true;
+            addTry(guess.toUpperCase(), guessCheck);
+            currentGuess.fill('');
+            digitInputs.forEach((input) => {
+                input.value = '';
+            });
+            updateCheckButton();
+            digitInputs[0]?.focus();
             if (guessCheck.bulls.length === conf.length) {
                 addResult(tries, gameTime, conf);
                 stopGame();
@@ -148,7 +178,8 @@ export function startGame(
 
         const roundEl = el('p', { className: 'game__round', text: 'Раунд 1' });
 
-        gameField.append(status, inputs, checkButton, roundEl);
+        gameField.append(status, inputs, errorMessage, checkButton, roundEl);
+        digitInputs[0]?.focus();
     }
 }
 
